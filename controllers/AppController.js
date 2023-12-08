@@ -2,17 +2,17 @@ const redisClient = require('../utils/redis');
 const dbClient = require('../utils/db');
 
 class AppController {
-  static getStatus(req, res) {
+  static async getStatus(req, res) {
     const redisAlive = redisClient.isAlive();
     const dbAlive = dbClient.isAlive();
 
     res.status(200).json({ redis: redisAlive, db: dbAlive });
   }
 
-  static getStats(req, res) {
+  static async getStats(req, res) {
     try {
-      const nbUsers = dbClient.nbUsers();
-      const nbFiles = dbClient.nbUsers();
+      const nbUsers = await dbClient.nbUsers();
+      const nbFiles = await dbClient.nbUsers();
 
       res.status(200).json({ users: nbUsers, files: nbFiles });
     } catch (error) {
