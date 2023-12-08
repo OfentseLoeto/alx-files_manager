@@ -7,11 +7,11 @@ class DBClient {
     const port = process.env.DB_PORT || 27017;
     const database = process.env.DB_DATABASE || 'files_manager';
 
-    // MongoDB connectio URI
+    // MongoDB connection URI
     const uri = `mongodb://${host}:${port}/${database}`;
 
-    // Create new MongoDb Client
-    this.client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    // Create new MongoDB Client
+    this.client = new MongoClient(uri, { useUnifiedTopology: true });
 
     // Connect to MongoDB client
     this.client.connect((err) => {
@@ -27,17 +27,30 @@ class DBClient {
   }
 
   async nbUsers() {
-    // returns the number of documents in the 'users' collection
+    // Returns the number of documents in the 'users' collection
     const db = this.client.db();
     const usersCollection = db.collection('users');
     return usersCollection.countDocuments();
   }
 
-  nbFiles() {
+  async nbFiles() {
     // Returns the number of documents in the 'files' collection
     const db = this.client.db();
     const filesCollection = db.collection('files');
     return filesCollection.countDocuments();
+  }
+
+  async getUserByEmail(email) {
+    const db = this.client.db();
+    const usersCollection = db.collection('users');
+    return usersCollection.findOne({ email });
+  }
+
+  async insertUser(user) {
+    const db = this.client.db();
+    const usersCollection = db.collection('users');
+    const result = await usersCollection.insertOne(user);
+    return result.ops[0];
   }
 }
 
