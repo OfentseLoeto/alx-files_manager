@@ -41,22 +41,26 @@ class DBClient {
   }
 
   async getUserByEmail(email) {
-    const db = this.client.db();
-    const usersCollection = db.collection('users');
-    return usersCollection.findOne({ email });
-  } catch (error) {
-        console.error(`Error in getUserByEmail: ${error}`);
-        throw error;
+    try {
+      const db = this.client.db();
+      const usersCollection = db.collection('users');
+      return usersCollection.findOne({ email });
+    } catch (error) {
+      console.error(`Error in getUserByEmail: ${error}`);
+      throw error;
     }
+  }
 
   async insertUser(user) {
-    const db = this.client.db();
-    const usersCollection = db.collection('users');
-    const result = await usersCollection.insertOne(user);
-    return result.ops[0];
-  } catch (error) {
-        console.error(`Error in insertUser: ${error}`);
-        throw error;
+    try {
+      const db = this.client.db();
+      const usersCollection = db.collection('users');
+      const result = await usersCollection.insertOne(user);
+      return result.ops[0];
+    } catch (error) {
+      console.error(`Error in insertUser: ${error}`);
+      throw error;
+    }
   }
 }
 
