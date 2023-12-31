@@ -1,41 +1,20 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 
-class DBClient {
-  constructor() {
-    this.host = process.env.DB_HOST || 'localhost';
-    this.port = process.env.DB_PORT || 27017;
-    this.database = process.env.DB_DATABASE || 'files_manager';
-    this.client = new MongoClient(`mongodb://${this.host}:${this.port}`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+mongoose.connect('mongodb://localhost:27017/files_manager', { useNewUrlParser: true, useUnifiedTopology: true });
 
-    this.client.connect((err) => {
-      if (err) {
-        console.error(`MongoDB connection error: ${err}`);
-      } else {
-        console.log('MongoDB connected');
-      }
-    });
-  }
+const User = mongoose.model('User', {
+  email: String,
+  password: String,
+});
 
-  isAlive() {
-    return this.client.isConnected();
-  }
-
-  async nbUsers() {
-    const usersCollection = this.client.db(this.database).collection('users');
-    const usersCount = await usersCollection.countDocuments();
-    return usersCount;
-  }
-
-  async nbFiles() {
-    const filesCollection = this.client.db(this.database).collection('files');
-    const filesCount = await filesCollection.countDocuments();
-    return filesCount;
-  }
+async function createUser(user) {
+  const newUser = new User(user);
+  return newUser.save();
 }
 
-const dbClient = new DBClient();
+async function isEmailExist(email) {
+  const user = await User.findOne({ email });
+  return user !== null;
+}
 
-export default dbClient;
+export { createUser, isEmailExist };
