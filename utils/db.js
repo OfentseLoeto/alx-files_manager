@@ -1,69 +1,41 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 class DBClient {
   constructor() {
-    // Set default values or use environmental variables
-    const host = process.env.DB_HOST || 'localhost';
-    const port = process.env.DB_PORT || 27017;
-    const database = process.env.DB_DATABASE || 'files_manager';
+    this.host = process.env.DB_HOST || 'localhost';
+    this.port = process.env.DB_PORT || 27017;
+    this.database = process.env.DB_DATABASE || 'files_manager';
+    this.client = new MongoClient(`mongodb://${this.host}:${this.port}`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-    // MongoDB connection URI
-    const uri = `mongodb://${host}:${port}/${database}`;
-
-    // Create new MongoDB Client
-    this.client = new MongoClient(uri, { useUnifiedTopology: true });
-
-    // Connect to MongoDB client
     this.client.connect((err) => {
       if (err) {
         console.error(`MongoDB connection error: ${err}`);
+      } else {
+        console.log('MongoDB connected');
       }
     });
   }
 
   isAlive() {
-    // Check if connection to MongoDB is successful
     return this.client.isConnected();
   }
 
   async nbUsers() {
-    // Returns the number of documents in the 'users' collection
-    const db = this.client.db();
-    const usersCollection = db.collection('users');
-    return usersCollection.countDocuments();
+    const usersCollection = this.client.db(this.database).collection('users');
+    const usersCount = await usersCollection.countDocuments();
+    return usersCount;
   }
 
   async nbFiles() {
-    // Returns the number of documents in the 'files' collection
-    const db = this.client.db();
-    const filesCollection = db.collection('files');
-    return filesCollection.countDocuments();
-  }
-
-  async getUserByEmail(email) {
-    try {
-      const db = this.client.db();
-      const usersCollection = db.collection('users');
-      return usersCollection.findOne({ email });
-    } catch (error) {
-      console.error(`Error in getUserByEmail: ${error}`);
-      throw error;
-    }
-  }
-
-  async insertUser(user) {
-    try {
-      const db = this.client.db();
-      const usersCollection = db.collection('users');
-      const result = await usersCollection.insertOne(user);
-      return result.ops[0];
-    } catch (error) {
-      console.error(`Error in insertUser: ${error}`);
-      throw error;
-    }
+    const filesCollection = this.client.db(this.database).collection('files');
+    const filesCount = await filesCollection.countDocuments();
+    return filesCount;
   }
 }
 
-// Create and export an instance of DBClient called 'dbClient'
 const dbClient = new DBClient();
-module.exports = dbClient;
+
+export default dbClient;
