@@ -1,4 +1,5 @@
-import dbClient from '../utils/db';
+import dbClient from '../db';
+import redisClient from '../redis';
 
 class AppController {
   static async getStatus(req, res) {
@@ -8,10 +9,14 @@ class AppController {
   }
 
   static async getStats(req, res) {
-    const usersCount = await dbClient.nbUsers();
-    const filesCount = await dbClient.nbFiles();
-    res.status(200).json({ users: usersCount, files: filesCount });
+    try {
+      const usersCount = await dbClient.nbUsers();
+      const filesCount = await dbClient.nbFiles();
+      res.status(200).json({ users: usersCount, files: filesCount });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 }
 
-module.exports = AppController;
+export default AppController;
