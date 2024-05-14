@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 class DBClient {
   constructor() {
     const {
-      DB_HOST = 'localhost',
+      DB_HOST = '127.0.0.1',
       DB_PORT = 27017,
       DB_DATABASE = 'files_manager',
     } = process.env;
