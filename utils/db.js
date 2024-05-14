@@ -5,7 +5,7 @@ class DBClient {
     const {
       DB_HOST = 'localhost',
       DB_PORT = 27017,
-      DB_DATABASE = 'files_manager'
+      DB_DATABASE = 'files_manager',
     } = process.env;
 
     this.host = DB_HOST;
