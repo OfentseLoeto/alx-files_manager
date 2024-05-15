@@ -1,4 +1,4 @@
-import redisClient from './redis';
+const redisClient = require('./redis').default;
 
 (async () => {
     console.log(redisClient.isAlive());
