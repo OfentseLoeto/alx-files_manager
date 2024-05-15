@@ -1,19 +1,38 @@
-import dbClient from './db';
+import { MongoClient } from 'mongodb';
 
-const waitConnection = async () => {
-  let i = 0;
-  while (i < 10) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (dbClient.isAlive()) return;
-    i++;
+class DBClient {
+  constructor() {
+    const {
+      DB_HOST = 'localhost',
+      DB_PORT = 27017,
+      DB_DATABASE = 'files_manager',
+    } = process.env;
+
+    this.host = DB_HOST;
+    this.port = DB_PORT;
+    this.database = DB_DATABASE;
+
+    const url = `mongodb://${this.host}:${this.port}`;
+    this.client = MongoClient(url, { useUnifiedTopology: true });
+    this.client.connect();
+    this.db = this.client.db(this.database);
   }
-  throw new Error('Connection timeout');
-};
 
-(async () => {
-  console.log(dbClient.isAlive());
-  await waitConnection();
-  console.log(dbClient.isAlive());
-  console.log(await dbClient.nbUsers());
-  console.log(await dbClient.nbFiles());
-})();
+  isAlive() {
+    return this.client.isConnected();
+  }
+
+  async nbUsers() {
+    const collection = this.db.collection('users');
+    return collection.countDocuments();
+  }
+
+  async nbFiles() {
+    const collection = this.db.collection('files');
+    return collection.countDocuments();
+  }
+}
+
+const dbClient = new DBClient();
+
+module.exports = dbClient;

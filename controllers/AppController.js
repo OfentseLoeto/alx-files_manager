@@ -11,7 +11,7 @@ const AppController = {
     const usersCount = await dbClient.nbUsers();
     const filesCount = await dbClient.nbFiles();
     res.status(200).json({ users: usersCount, files: filesCount });
-  }
+  },
 };
 
 module.exports = AppController;
