@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import sha1 from 'sha1';
 
-import dbClient from '../db';
+import dbClient from '../utils/db';
 
 const UsersController = {
   async postNew(req, res) {
