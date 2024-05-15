@@ -1,4 +1,4 @@
-import redis from 'redis';
+import * as redis from 'redis';
 import { promisify } from 'util';
 
 class RedisClient {
@@ -20,6 +20,7 @@ class RedisClient {
       return await getAsync(key);
     } catch (error) {
       console.error('Redis GET Error:', error);
+      return null;
     }
   }
 

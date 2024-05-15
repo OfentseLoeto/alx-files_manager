@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import sha1 from 'sha1';
-
 import dbClient from '../utils/db';
 
 const UsersController = {
@@ -32,7 +31,7 @@ const UsersController = {
     await dbClient.usersCollection.insertOne(newUser);
 
     return res.status(201).json({ email: newUser.email, id: newUser._id });
-  },
+  }
 };
 
 module.exports = UsersController;
